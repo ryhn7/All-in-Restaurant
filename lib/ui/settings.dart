@@ -39,20 +39,20 @@ class SettingScreen extends StatelessWidget {
             Material(
               child: ListTile(
                 title: Text('Scheduling Promo'),
-                trailing: Consumer<SettingProvider>(
-                  builder: (context, scheduled, _) {
-                    return Switch.adaptive(
-                      value: scheduled.isScheduled,
-                      onChanged: (value) async {
-                        if (Platform.isIOS) {
-                          customDialog(context);
-                        } else {
-                          scheduled.scheduledInfo(value);
-                        }
-                      },
-                    );
-                  },
-                ),
+                // trailing: Consumer<SettingProvider>(
+                //   builder: (context, scheduled, _) {
+                //     return Switch.adaptive(
+                //       value: scheduled.isScheduled,
+                //       onChanged: (value) async {
+                //         if (Platform.isIOS) {
+                //           customDialog(context);
+                //         } else {
+                //           scheduled.scheduledInfo(value);
+                //         }
+                //       },
+                //     );
+                //   },
+                // ),
               ),
             ),
           ],

@@ -17,20 +17,20 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
-  final NotificationHelper _notificationHelper = NotificationHelper();
+  // final NotificationHelper _notificationHelper = NotificationHelper();
 
-  @override
-  void initState() {
-    super.initState();
-    _notificationHelper
-        .configureSelectNotificationSubject(RestaurantDetailPage.routeName);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _notificationHelper
+  //       .configureSelectNotificationSubject(RestaurantDetailPage.routeName);
+  // }
 
-  @override
-  void dispose() {
-    selectNotificationSubject.close();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   selectNotificationSubject.close();
+  //   super.dispose();
+  // }
 
 
 

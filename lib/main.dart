@@ -1,11 +1,9 @@
-import 'dart:io';
-
-import 'package:android_alarm_manager/android_alarm_manager.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:hive/hive.dart';
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:restaurant_app/common/navigation.dart';
+import 'package:restaurant_app/common/styles.dart';
 import 'package:restaurant_app/data/model/categori.dart';
 import 'package:restaurant_app/data/model/menu.dart';
 import 'package:restaurant_app/data/model/menus.dart';
@@ -13,31 +11,25 @@ import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/data/model/review.dart';
 import 'package:restaurant_app/provider/provider.dart';
 import 'package:restaurant_app/ui/restaurant_detail_page.dart';
-import 'package:restaurant_app/common/styles.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:restaurant_app/ui/splash_screen.dart';
-import 'package:responsive_framework/responsive_framework.dart';
-import 'package:restaurant_app/utils/background_service.dart';
 import 'package:restaurant_app/utils/config.dart';
-import 'package:restaurant_app/utils/notif_helper.dart';
 
 import 'data/api/api.service.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final NotificationHelper _notificationHelper = NotificationHelper();
-  final BackgroundService _service = BackgroundService();
+  // final NotificationHelper _notificationHelper = NotificationHelper();
+  // final BackgroundService _service = BackgroundService();
 
-  _service.initializeIsolate();
+  // _service.initializeIsolate();
 
-  if (Platform.isAndroid) await AndroidAlarmManager.initialize();
+  // if (Platform.isAndroid) await AndroidAlarmManager.initialize();
 
-  await _notificationHelper.initNotifications(flutterLocalNotificationsPlugin);
+  // await _notificationHelper.initNotifications(flutterLocalNotificationsPlugin);
 
   await Hive.initFlutter();
   Hive.registerAdapter(RestaurantAdapter());
@@ -66,18 +58,14 @@ class MyApp extends StatelessWidget {
         builder: (context, Box box, child) {
           var darkMode = box.get('darkMode', defaultValue: false);
           return MaterialApp(
-            builder: (context, widget) => ResponsiveWrapper.builder(
-              BouncingScrollWrapper.builder(context, widget!),
-              maxWidth: 1200,
-              minWidth: 450,
-              defaultScale: true,
+            builder: (context, widget) => ResponsiveBreakpoints.builder(
+              child: widget!,
               breakpoints: [
-                ResponsiveBreakpoint.resize(450, name: MOBILE),
-                ResponsiveBreakpoint.autoScale(800, name: TABLET),
-                ResponsiveBreakpoint.autoScale(1000, name: TABLET),
-                ResponsiveBreakpoint.resize(1200, name: DESKTOP),
+                const Breakpoint(start: 0, end: 450, name: MOBILE),
+                const Breakpoint(start: 451, end: 800, name: TABLET),
+                const Breakpoint(start: 801, end: 1920, name: DESKTOP),
               ],
-              backgroundColor: primaryColor,
+              // backgroundColor: primaryColor,
             ),
             initialRoute: SplashScreen.routeName,
             routes: {
@@ -92,7 +80,6 @@ class MyApp extends StatelessWidget {
             themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
             theme: ThemeData(
               primaryColor: kOrangeColor,
-              accentColor: secondaryColor,
               scaffoldBackgroundColor: Colors.white,
               visualDensity: VisualDensity.adaptivePlatformDensity,
               fontFamily: "Hellix",
