@@ -24,9 +24,9 @@ class RestaurantAdapter extends TypeAdapter<Restaurant> {
       city: fields[5] as String,
       rating: fields[6] as double,
       address: fields[4] as String,
-      categories: (fields[7] as List).cast<Categories>(),
-      menus: fields[8] as Menus,
-      customerReviews: (fields[9] as List).cast<Review>(),
+      categories: (fields[7] as List?)?.cast<Categories>(),
+      menus: fields[8] as Menus?,
+      customerReviews: (fields[9] as List?)?.cast<Review>(),
     );
   }
 
