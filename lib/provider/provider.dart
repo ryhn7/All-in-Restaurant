@@ -5,14 +5,18 @@ import 'package:restaurant_app/data/model/response/response_detail_restaurant.da
 import 'package:restaurant_app/data/model/response/response_restaurant.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/data/model/review.dart';
+import 'package:restaurant_app/data/remote/restaurant_api.dart';
+import 'package:restaurant_app/domain/use_case/use_cases_restaurant.dart';
+import 'package:restaurant_app/ui/state/restaurant_detail_state.dart';
 
 enum ResultState { Loading, NoData, HasData, Error }
 
 class AppProvider extends ChangeNotifier {
-  final ApiService apiService;
+  final RestaurantApi apiService;
+  final UseCasesRestaurant useCases;
   final DbService dbService = DbService();
 
-  AppProvider({required this.apiService});
+  AppProvider({required this.apiService, required this.useCases});
 
   ResponseRestaurant? _responseRestaurant;
   ResponseRestaurantDetail? _responseRestaurantDetail;
@@ -31,16 +35,33 @@ class AppProvider extends ChangeNotifier {
   ResultState? get stateFavourite => _stateFavourite;
   String get message => _message;
 
+  RestaurantDetailListState _stateDetailResto = RestaurantDetailListState();
+  RestaurantDetailListState get stateDetailResto => _stateDetailResto;
 
   void getRestaurants() {
     _fetchRestaurants();
   }
 
-  Future<void> getRestaurant(String id) async {
-    await _fetchRestaurant(id);
+  // Future<void> getRestaurant(String id) async {
+  //   await _fetchRestaurant(id);
+  // }
+
+  Future<void> getRestaurantById(String id) async {
+    _updateState(isLoading: true);
+
+    try {
+      final result = await useCases.getRestaurantById(id);
+      if (result.isSuccess) {
+        _updateState(isLoading: false, restaurant: result.resultData);
+      } else {
+        _updateState(isLoading: false, error: result.errorMessage);
+      }
+    } catch (e) {
+      _updateState(isLoading: false, error: e.toString());
+    }
   }
 
-    Future<void> getFavoriteRestaurants() async {
+  Future<void> getFavoriteRestaurants() async {
     await _getFavorites();
   }
 
@@ -48,6 +69,7 @@ class AppProvider extends ChangeNotifier {
     try {
       _state = ResultState.Loading;
       notifyListeners();
+
       final response = await apiService.getList();
       if (response.restaurants.isEmpty) {
         _state = ResultState.NoData;
@@ -128,7 +150,7 @@ class AppProvider extends ChangeNotifier {
     }
   }
 
-    Future<dynamic> _getFavorites() async {
+  Future<dynamic> _getFavorites() async {
     try {
       _stateFavourite = ResultState.Loading;
       notifyListeners();
@@ -168,5 +190,18 @@ class AppProvider extends ChangeNotifier {
       notifyListeners();
       return _message = 'Error';
     }
+  }
+
+  void _updateState({
+    bool? isLoading,
+    String? error,
+    Restaurant? restaurant,
+  }) {
+    _stateDetailResto = _stateDetailResto.copyWith(
+      isLoading: isLoading,
+      error: error,
+      restaurant: restaurant,
+    );
+    notifyListeners();
   }
 }
