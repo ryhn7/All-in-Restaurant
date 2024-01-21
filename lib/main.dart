@@ -9,9 +9,14 @@ import 'package:restaurant_app/data/model/menu.dart';
 import 'package:restaurant_app/data/model/menus.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/data/model/review.dart';
+import 'package:restaurant_app/data/remote/restaurant_api.dart';
+import 'package:restaurant_app/di/injection.dart';
+import 'package:restaurant_app/domain/use_case/use_cases_restaurant.dart';
 import 'package:restaurant_app/provider/provider.dart';
 import 'package:restaurant_app/ui/restaurant_detail_page.dart';
 import 'package:restaurant_app/ui/splash_screen.dart';
+import 'package:restaurant_app/ui/view_model/restaurant_detail_view_model.dart';
+import 'package:restaurant_app/ui/view_model/restaurant_list_view_model.dart';
 import 'package:restaurant_app/utils/config.dart';
 
 import 'data/api/api.service.dart';
@@ -39,6 +44,7 @@ void main() async {
   Hive.registerAdapter(ReviewAdapter());
   await Hive.openBox(Configuration.Box_Fav);
   await Hive.openBox(Configuration.Box_Dark_Mode);
+  await configureDependencies();
   runApp(MyApp());
 }
 
@@ -49,9 +55,15 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<AppProvider>(
           create: (_) {
-            return AppProvider(apiService: ApiService());
+            return AppProvider(
+              apiService: getIt<RestaurantApi>(),
+              useCases: getIt<UseCasesRestaurant>(),
+            );
           },
         ),
+        ChangeNotifierProvider<ZRestaurantListViewModel>(
+            create: (_) =>
+                ZRestaurantListViewModel(getIt<UseCasesRestaurant>())),
       ],
       child: ValueListenableBuilder(
         valueListenable: Hive.box(Configuration.Box_Dark_Mode).listenable(),
