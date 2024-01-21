@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:restaurant_app/ui/restaurant_detail_page.dart';
+import 'package:restaurant_app/ui/view_model/restaurant_list_view_model.dart';
 import 'package:restaurant_app/utils/notif_helper.dart';
 import 'package:restaurant_app/widgets/custom_appbar.dart';
 import 'package:restaurant_app/widgets/restaurant_item.dart';
@@ -32,9 +33,6 @@ class _ListPageState extends State<ListPage> {
   //   super.dispose();
   // }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,21 +51,32 @@ class _ListPageState extends State<ListPage> {
               height: 30,
             ),
           ),
-          Consumer<AppProvider>(
-            builder: (context, state, _) {
-              if (state.state == ResultState.Loading) {
+          Consumer<ZRestaurantListViewModel>(
+            builder: (context, viewModel, _) {
+              final state = viewModel.state;
+              if (state.isLoading) {
                 return SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange)
-                  )),
+                  child: Center(
+                      child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.orange))),
                 );
-              } else if (state.state == ResultState.HasData) {
+              } else if (state.restaurants != null) {
                 return SliverList(
-                    delegate: SliverChildListDelegate(state.result!.restaurants
-                        .map((restaurant) =>
-                            RestaurantItem(restaurant: restaurant,provider: state ),)
-                        .toList()));
-              } else if (state.state == ResultState.Error) {
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final restaurant = state.restaurants![index];
+                      return RestaurantItem(
+                        restaurant: restaurant,
+                        provider:
+                            Provider.of<AppProvider>(context, listen: false),
+                      );
+                    },
+                    childCount: state.restaurants!.length,
+                  ),
+                );
+              } else if (state.error != null) {
+                print("Ada Error: ${state.error}");
                 return SliverFillRemaining(
                   child: Center(
                     child: Lottie.asset('assets/lottie/no_internet.json'),
@@ -86,25 +95,3 @@ class _ListPageState extends State<ListPage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
