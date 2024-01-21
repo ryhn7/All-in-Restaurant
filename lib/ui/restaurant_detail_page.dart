@@ -25,17 +25,21 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<AppProvider>(
-        builder: (context, state, _) {
-          if (state.stateDetail == ResultState.Loading) {
-            return Center(child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange)
-            ));
-          } else if (state.stateDetail == ResultState.HasData) {
+        builder: (context, viewModel, _) {
+          final state = viewModel.stateDetailResto;
+          if (state.isLoading) {
+            return Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange)));
+          } else if (state.restaurant != null) {
             final provider = Provider.of<AppProvider>(context, listen: false);
-            return screen(context, state.restaurant!.restaurant, provider);
-          } else if (state.stateDetail == ResultState.NoData) {
-            return Center(child: Text(state.message));
-          } else if (state.stateDetail == ResultState.Error) {
+            return screen(
+                context, state.restaurant!, provider);
+          }
+          // else if (state.stateDetail == ResultState.NoData) {
+          //   return Center(child: Text(state.message));
+          // }
+          else if (state.error != null) {
             return Center(
               child: Container(
                 padding: EdgeInsets.all(16),
@@ -83,7 +87,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 width: 10.0,
               ),
             ],
-            
           )),
         ),
         menuList(restaurant.menus!.foods, MenuType.food),
@@ -159,7 +162,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
-                    ),
+                  ),
                 ),
               ],
             ),

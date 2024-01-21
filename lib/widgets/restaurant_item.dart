@@ -18,7 +18,7 @@ class RestaurantItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Provider.of<AppProvider>(context, listen: false)
-            .getRestaurant(restaurant.id);
+            .getRestaurantById(restaurant.id);
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return RestaurantDetailPage(restaurant: restaurant);
         })).then((value) => provider.getFavoriteRestaurants());

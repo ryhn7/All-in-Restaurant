@@ -150,7 +150,7 @@ class DetailAppBar extends SliverPersistentHeaderDelegate {
                                 onTap: () {
                                   Provider.of<AppProvider>(context,
                                           listen: false)
-                                      .getRestaurant(restaurant.id);
+                                      .getRestaurantById(restaurant.id);
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
                                     return ReviewScreen(restaurant: restaurant);
@@ -215,6 +215,6 @@ class DetailAppBar extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 
   setState(AppProvider provider) {
-    provider.getRestaurant(restaurant.id);
+    provider.getRestaurantById(restaurant.id);
   }
 }
